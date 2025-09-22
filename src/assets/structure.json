@@ -1,0 +1,26 @@
+{
+    "teams": [
+        {
+            "name": "Team 1",
+            "members": []
+        },
+        {
+            "name": "Team 2",
+            "members": []
+        }
+    ],
+    "games": [
+        {
+            "id": "game-1",
+            "name": "Game 1",
+            "status": "waiting",
+            "players": []
+        },
+        {
+            "id": "game-2",
+            "name": "Game 2",
+            "status": "playing",
+            "players": []
+        }
+    ]
+}
