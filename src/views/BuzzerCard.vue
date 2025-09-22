@@ -1,6 +1,6 @@
 <template>
           
-        <v-card>
+    <v-card class="app-card buzzer-card pa-6" elevation="0">
          <v-card-text>
                <!-- Game Room Header -->
             <div class="mb-6">
@@ -21,7 +21,7 @@
                 </div>
                 <!-- Show normal BUZZ when not in countdown -->
                 <div v-else-if="status === 'game'">
-                    <h1 class="text-h1 font-weight-bold" style="color: #a020f0;">BUZZ!</h1>
+                    <h1 class="text-h1 font-weight-bold buzz-heading">BUZZ!</h1>
                     <p class="text-body-1 text-medium-emphasis">Press the button!</p>
                 </div>
             </div>
@@ -42,7 +42,11 @@
 
 
 <style scoped>
-
+.buzzer-card { max-width: 640px; width: 100%; }
+@media (max-width: 599px) {
+    .buzzer-card { padding: var(--space-lg) !important; }
+    .buzzer-card :deep(.text-h1) { font-size: 2.4rem; }
+}
 </style>
 
 

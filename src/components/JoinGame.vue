@@ -1,5 +1,4 @@
 <template>
-    <v-card>
         <v-card-text>
             <v-text-field
                 v-model="gameID"
@@ -44,7 +43,6 @@
                 Join game
             </v-btn>
         </v-card-actions>
-    </v-card>
 </template>
 
 <script setup>
@@ -110,3 +108,10 @@ async function handleJoin() {
     }
 }
 </script>
+
+<style scoped>
+.join-game-card :deep(.v-card-text) { padding-top: var(--space-lg); }
+@media (max-width: 599px) {
+    .join-game-card :deep(.v-card-text) { padding-top: var(--space-md); }
+}
+</style>

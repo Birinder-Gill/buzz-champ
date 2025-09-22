@@ -1,5 +1,5 @@
 <template>
-    <v-card  style="background-color: #faf5ff;">
+   
         <v-card-text>
             <v-text-field
                 v-model="input1"
@@ -22,7 +22,7 @@
                 :disabled="submitting || nameErrors.length > 0"
             >{{ submitting ? 'Creating...' : 'Create new game' }}</v-btn>
         </v-card-actions>
-    </v-card>
+    
 </template>
 
 <script setup>
@@ -63,3 +63,10 @@ async function handleCreateGame() {
     }
 }
 </script>
+
+<style scoped>
+.new-game-card :deep(.v-card-text) { padding-top: var(--space-lg); }
+@media (max-width: 599px) {
+    .new-game-card :deep(.v-card-text) { padding-top: var(--space-md); }
+}
+</style>

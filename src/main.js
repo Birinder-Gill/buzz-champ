@@ -16,6 +16,9 @@ import "../firebase-config";
 const vuetify = createVuetify({
   components,
   directives,
+  theme:{
+    defaultTheme: 'light',
+  },
   icons: {
     defaultSet: 'mdi',
   },

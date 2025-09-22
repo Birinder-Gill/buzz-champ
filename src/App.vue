@@ -14,16 +14,20 @@
 
 <style>
 .v-container {
-    display: flex;
-    justify-content: center;
-    /* horizontal centering */
-    align-items: center;
-    /* vertical centering */
-    height: 100vh;
-    /* full viewport height */
-    width: 100vw;
-    /* full viewport width */
-    background-color: #f3e8ff;
-    /* light pink/purple */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* allow natural vertical flow */
+  min-height: 100vh;
+  width: 100%;
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+  background: var(--color-bg-app);
+}
+
+@media (max-width: 599px) {
+  .v-container {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+  }
 }
 </style>

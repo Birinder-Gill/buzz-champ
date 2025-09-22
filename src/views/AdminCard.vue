@@ -1,7 +1,7 @@
 <template>
     <v-card
-      class="pa-6"
-
+      class="app-card admin-card pa-6"
+      elevation="0"
     >
       <!-- Game Room Header -->
       <div class="text-center mb-4">
@@ -110,4 +110,22 @@ function handleStartGame() {
 </script>
 
 <style scoped>
+.admin-card {
+  max-width: 760px;
+  width: 100%;
+}
+.admin-card :deep(h2) { color: var(--color-text-primary); }
+
+/* Team list container if needed in future */
+.teams-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-bottom: var(--space-lg);
+  padding-right: 4px;
+}
+
+@media (max-width: 599px) {
+  .admin-card { padding: var(--space-lg) !important; }
+  .admin-card :deep(h2) { font-size: 1.25rem; }
+}
 </style>
