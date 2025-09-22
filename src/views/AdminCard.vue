@@ -1,10 +1,7 @@
 <template>
-  <v-container class="fill-height d-flex justify-center align-center" fluid>
     <v-card
       class="pa-6"
-      elevation="4"
-      max-width="600"
-      style="background-color: #faf5ff;"
+
     >
       <!-- Game Room Header -->
       <div class="text-center mb-4">
@@ -52,7 +49,6 @@
         {{status === 'complete'? "Next round": (teamCount === 0 ? 'Waiting for teams...' : 'Start Game') }}
       </v-btn>
     </v-card>
-  </v-container>
 </template>
 
 <script setup>
@@ -114,8 +110,4 @@ function handleStartGame() {
 </script>
 
 <style scoped>
-/* Optional: soft background like in screenshot */
-.v-container {
-  background: #f3e8ff;
-}
 </style>

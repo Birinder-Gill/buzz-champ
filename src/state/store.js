@@ -1,7 +1,7 @@
 import { GAMES, ADMIN, MAX_TEAMS, ROUNDS, TEAMS, BUZZED, BUZZED_AT } from "../data/keys";
 import { getDatabase } from "firebase/database";
 import { app } from "../../firebase-config.js";
-import { ref, onValue, off, set, update, serverTimestamp, get } from "firebase/database";
+import { ref, onValue, off, set, update, serverTimestamp, get, child } from "firebase/database";
 import { reactive } from "vue";
 
 // Global reactive state for admin status
@@ -39,18 +39,24 @@ async function createNewGame(name, max_teams = 5) {
 }
 
 async function joinAsTeam(teamName, game_id) {
-
   const db = getDatabase(app);
 
-  // Write game under specific key instead of generating a push key
-  const gameRef = ref(db, `${GAMES}/${game_id}/${TEAMS}/${teamName}`);
+  // Check if the game exists
+  const gameRef = ref(db, `${GAMES}/${game_id}`);
+  const gameSnap = await get(gameRef);
+  if (!gameSnap.exists()) {
+    throw new Error("Game not found");
+  }
 
+  // Write game under specific key instead of generating a push key
+  const teamRef = ref(db, `${GAMES}/${game_id}/${TEAMS}/${teamName}`);
+  
   const newTeam = {
     TEAM_NAME: teamName,
     [BUZZED]: false,
     [BUZZED_AT]: 0
   };
-  await set(gameRef, newTeam);
+  await set(teamRef, newTeam);
 
   // Set admin status to false since this user joined an existing game
   gameState.isAdmin = false;

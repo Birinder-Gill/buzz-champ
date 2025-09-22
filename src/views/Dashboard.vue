@@ -1,13 +1,8 @@
 <template>
-    <v-container class="fill-height" fluid>
-      <div v-if="gameState.isAdmin">
-          <AdminCard />
-    </div>
-    <div v-else>
-        <BuzzerCard />
-      </div>
-      
-    </v-container>
+  <AdminCard v-if="gameState.isAdmin" />
+  <BuzzerCard v-else />
+
+
 </template>
 
 <script setup>
@@ -19,3 +14,4 @@ import BuzzerCard from './BuzzerCard.vue';
 // You can use it in the template or in computed properties
 </script>
 
+<style scoped></style>
