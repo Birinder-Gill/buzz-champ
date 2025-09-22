@@ -10,7 +10,7 @@
       </div>
 
       <!-- Teams in Lobby -->
-      <div class="mb-4">
+      <div class="ma-4">
         <v-row class="align-center">
           <v-icon class="mr-2">mdi-account-group</v-icon>
           <span class="font-weight-medium">

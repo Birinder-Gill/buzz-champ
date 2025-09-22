@@ -16,12 +16,31 @@ import "../firebase-config";
 const vuetify = createVuetify({
   components,
   directives,
-  theme:{
+  theme: {
     defaultTheme: 'light',
-  },
-  icons: {
-    defaultSet: 'mdi',
-  },
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          background: '#f3e8ff',
+          surface: '#faf5ff',
+          primary: '#6a23b5',
+          secondary: '#8e24aa',
+          accent: '#a020f0'
+        }
+      },
+      dark: {
+        dark: true,
+        colors: {
+          background: '#1e1a26',
+          surface: '#2a2333',
+          primary: '#bb86fc',
+          secondary: '#d0a1ff',
+          accent: '#d58aff'
+        }
+      }
+    }
+  }
 })
 
 createApp(App)
