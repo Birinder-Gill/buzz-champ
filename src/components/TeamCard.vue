@@ -1,33 +1,21 @@
 <template>
-  <v-card 
-    class="pa-4 mb-3" 
-    :color="team.BUZZED ? 'amber-lighten-4' : 'deep-purple-lighten-5'"
-    elevation="2"
-    :class="{ 'buzzer-active': team.BUZZED }"
-  >
+  <v-card class="pa-4 mb-3" :color="team.BUZZED ? 'amber-lighten-4' : 'deep-purple-lighten-5'" elevation="2"
+    :class="{ 'buzzer-active': team.BUZZED }">
     <v-row align="center" no-gutters>
       <v-col cols="auto">
-        <v-avatar color="deep-purple-lighten-2" size="40">
-          <v-icon color="white">mdi-account-group</v-icon>
-        </v-avatar>
+        <v-icon v-if="team.BUZZED" color="amber-darken-2"  class="buzzer-icon">
+          mdi-bell-ring
+        </v-icon>
+        <v-icon v-else>mdi-account-multiple</v-icon>
       </v-col>
-      
+
       <v-col class="ml-3">
         <div class="text-h6 font-weight-medium">
           {{ team.TEAM_NAME || 'Unknown Team' }}
         </div>
       </v-col>
-      
-      <v-col cols="auto">
-        <v-icon 
-          v-if="team.BUZZED" 
-          color="amber-darken-2" 
-          size="32"
-          class="buzzer-icon"
-        >
-          mdi-bell-ring
-        </v-icon>
-      </v-col>
+
+
     </v-row>
   </v-card>
 </template>
@@ -52,7 +40,12 @@ defineProps({
 }
 
 @keyframes ring {
-  0% { transform: rotate(-10deg); }
-  100% { transform: rotate(10deg); }
+  0% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(10deg);
+  }
 }
 </style>

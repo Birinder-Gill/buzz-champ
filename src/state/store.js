@@ -50,7 +50,7 @@ async function joinAsTeam(teamName, game_id) {
 
   // Write game under specific key instead of generating a push key
   const teamRef = ref(db, `${GAMES}/${game_id}/${TEAMS}/${teamName}`);
-  
+
   const newTeam = {
     TEAM_NAME: teamName,
     [BUZZED]: false,
@@ -64,10 +64,39 @@ async function joinAsTeam(teamName, game_id) {
   gameState.teamName = teamName;
 }
 
-function buzzBuzzer() {
+async function finishGame() {
+  const db = getDatabase(app);
+  const gameRef = ref(db, `${GAMES}/${gameState.gameId}`);
+
+  await update(gameRef, {
+    STATUS: "terminated"
+  });
+}
+
+async function exitGame() {
+  const db = getDatabase(app);
+ const teamRef = ref(db, `${GAMES}/${gameState.gameId}/${TEAMS}/${gameState.teamName}`);
+
+  await set(teamRef, null); // Remove the team entry
+
+  // Clear local game state
+  gameState.isAdmin = false;
+  gameState.gameId = null;
+  gameState.teamName = null;
+}
+
+async function kickTeam(teamName) {
+  const db = getDatabase(app);
+  const teamRef = ref(db, `${GAMES}/${gameState.gameId}/${TEAMS}/${teamName}`);
+
+  await set(teamRef, null); // Remove the team entry
+}
+
+
+async function buzzBuzzer() {
   const db = getDatabase(app);
   const teamRef = ref(db, `${GAMES}/${gameState.gameId}/${TEAMS}/${gameState.teamName}`);
-  update(teamRef, {
+  await update(teamRef, {
     [BUZZED]: true,
     [BUZZED_AT]: serverTimestamp()
   });
@@ -133,4 +162,4 @@ function setListeners(updateLocalGame) {
   return () => off(gameRef);
 }
 
-export { createNewGame, setListeners, joinAsTeam, gameState, startGame, finishCountdown, buzzBuzzer }
+export { createNewGame, setListeners, joinAsTeam, gameState, startGame, finishCountdown, buzzBuzzer, finishGame, exitGame, kickTeam };

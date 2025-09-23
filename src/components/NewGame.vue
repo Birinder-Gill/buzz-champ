@@ -11,7 +11,16 @@
                 @input="validateName"
                 :disabled="submitting"
             />
-            
+            <!-- Max Teams Dropdown
+            <v-select
+                v-model="maxTeams"
+                :items="maxTeamOptions"
+                label="Max Teams"
+                variant="outlined"
+                density="compact"
+                class="mb-4 max-teams-select"
+                :disabled="submitting"
+            /> -->
         </v-card-text>
         <v-card-actions>
             <v-spacer />
@@ -33,6 +42,8 @@ import { createNewGame } from '../state/store.js'
 const input1 = ref('')
 const nameErrors = ref([])
 const submitting = ref(false)
+const maxTeams = ref(5) // Default value is 5
+const maxTeamOptions = [5, 7, 10, 15, 20]
 const router = useRouter()
 
 function validateName() {
@@ -54,7 +65,7 @@ async function handleCreateGame() {
     if (nameErrors.value.length) return
     submitting.value = true
     try {
-        await createNewGame(input1.value.trim())
+        await createNewGame(input1.value.trim(), maxTeams.value)
         router.push('/game')
     } catch (e) {
         nameErrors.value = ['Could not create game. Please try again.']
@@ -66,6 +77,7 @@ async function handleCreateGame() {
 
 <style scoped>
 .new-game-card :deep(.v-card-text) { padding-top: var(--space-lg); }
+.max-teams-select :deep(input) { font-size: 0.9rem; }
 @media (max-width: 599px) {
     .new-game-card :deep(.v-card-text) { padding-top: var(--space-md); }
 }

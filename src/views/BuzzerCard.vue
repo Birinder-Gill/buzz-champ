@@ -1,11 +1,32 @@
 <template>
-          
-    <v-card class="app-card buzzer-card pa-6" elevation="0">
-         <v-card-text>
-               <!-- Game Room Header -->
+    <GameTerminated v-if="status === 'terminated'" />
+    <v-card v-else-if="currentTeam" class="app-card buzzer-card pa-6" elevation="0">
+        <!-- Exit Button: Top Right -->
+        <div class="exit-btn-container">
+            <v-btn class="exit-btn" icon size="small" variant="text" aria-label="Exit" @click="showConfirm = true">
+                <v-icon>mdi-logout</v-icon>
+            </v-btn>
+        </div>
+
+        <!-- Exit Confirmation Dialog -->
+        <v-dialog v-model="showConfirm" width="350">
+            <v-card>
+                <v-card-title class="text-h6">Exit Game Room?</v-card-title>
+                <v-card-text>
+                    Are you sure you want to exit? You will leave the admin panel.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn variant="text" @click="showConfirm = false">Cancel</v-btn>
+                    <v-btn color="deep-purple-lighten-2" variant="flat" @click="handleExit">Exit</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-card-text>
+            <!-- Game Room Header -->
             <div class="mb-6">
                 <h2 class="text-h5 font-weight-bold">Game Room: {{ gameState.gameId }}</h2>
-                <p class="text-body-2 text-medium-emphasis">You are on Team: {{ gameState.teamName }}</p>
+                <p class="text-body-2 text-medium-emphasis">You are on Team: {{ gameState.teamName }} in {{ admin }}'s game'</p>
             </div>
 
 
@@ -35,25 +56,47 @@
                 :disabled="status === 'countdown'" @click="handleBuzzClick">
                 BUZZ
             </v-btn>
-         </v-card-text>
-        </v-card>
+        </v-card-text>
+    </v-card>
+    <v-progress-circular indeterminate  v-else></v-progress-circular>
 </template>
 
 
 
 <style scoped>
-.buzzer-card { max-width: 640px; width: 100%; }
+.buzzer-card {
+    max-width: 640px;
+    width: 100%;
+}
+/* Add absolute positioning for exit button */
+.exit-btn-container {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+}
+.exit-btn {
+    /* Remove margin if any, for tight placement */
+    margin: 0;
+}
 @media (max-width: 599px) {
-    .buzzer-card { padding: var(--space-lg) !important; }
-    .buzzer-card :deep(.text-h1) { font-size: 2.4rem; }
+    .buzzer-card {
+        padding: var(--space-lg) !important;
+    }
+
+    .buzzer-card :deep(.text-h1) {
+        font-size: 2.4rem;
+    }
 }
 </style>
 
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { setListeners, finishCountdown, buzzBuzzer, gameState } from '../state/store.js';
-
+import { setListeners, finishCountdown, buzzBuzzer, gameState, exitGame } from '../state/store.js';
+import GameTerminated from '../components/GameTerminated.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const admin = ref('');
 const maxTeams = ref(0);
 const status = ref('lobby');
@@ -61,6 +104,7 @@ const currentTeam = ref(null); // holds only this client's team object
 const countdown = ref(null);
 const countdownStartTime = ref(null);
 const countdownDuration = ref(3000); // 3 seconds default
+const showConfirm = ref(false);
 
 // Timer management
 let countdownTimer = null;
@@ -70,10 +114,10 @@ function updateLocalGame(data) {
     maxTeams.value = data.MAX_TEAMS || 5;
     status.value = data.STATUS || '';
     // NEW: extract only this team's object
-    if (gameState.teamName && data.TEAMS) {
-        currentTeam.value = data.TEAMS[gameState.teamName] || null;
+    if (gameState.teamName && data.TEAMS && data.TEAMS[gameState.teamName] != null) {
+        currentTeam.value = data.TEAMS[gameState.teamName];
     } else {
-        currentTeam.value = null;
+        status.value = "terminated";
     }
 
     // Handle countdown data
@@ -84,7 +128,10 @@ function updateLocalGame(data) {
         countdownDuration.value = data.COUNTDOWN_DURATION;
     }
 }
-
+async function handleExit() {
+    showConfirm.value = false;
+    await exitGame();
+}
 function startCountdownTimer(serverStartTime, duration) {
     // Clear any existing timer
     if (countdownTimer) {
