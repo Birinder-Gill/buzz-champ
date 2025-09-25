@@ -1,54 +1,26 @@
 <template>
-        <v-card-text>
-            <v-text-field
-                v-model="gameID"
-                label="GAME ID"
-                outlined
-                class="mb-4"
-                :counter="4"
-                :maxlength="4"
-                :error-messages="gameIdErrors"
-                @input="onGameIdInput"
-                @blur="validateGameId"
-                :disabled="loading"
-            />
-            <v-text-field
-                v-model="teamName"
-                label="Your team name"
-                outlined
-                class="mb-4"
-                :error-messages="teamNameErrors"
-                @blur="validateTeamName"
-                @input="validateTeamName"
-                :disabled="loading"
-            />
-            <v-alert
-                v-if="error"
-                type="error"
-                class="mb-4"
-                dense
-            >
-                {{ error }}
-            </v-alert>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer />
-            <v-btn
-                color="deep-purple-lighten-2"
-                variant="flat"
-                @click="handleJoin"
-                :loading="loading"
-                :disabled="loading || gameIdErrors.length > 0 || teamNameErrors.length > 0"
-            >
-                Join game
-            </v-btn>
-        </v-card-actions>
+    <v-card-text>
+        <v-text-field v-model="gameID" label="GAME ID" outlined class="mb-4" :counter="4" :maxlength="4"
+            :error-messages="gameIdErrors" @input="onGameIdInput" @blur="validateGameId" :disabled="loading" />
+        <v-text-field v-model="teamName" label="Your team name" outlined class="mb-4" :error-messages="teamNameErrors"
+            @blur="validateTeamName" @input="validateTeamName" :disabled="loading" />
+        <v-alert v-if="error" type="error" class="mb-4" dense>
+            {{ error }}
+        </v-alert>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer />
+        <FunkyButton :disabled="loading || gameIdErrors.length > 0 || teamNameErrors.length > 0" color="#00796B"
+            @click="handleJoin" :text="loading ? 'Joining...' : 'Join game'" />
+
+    </v-card-actions>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { joinAsTeam } from '../state/store.js';
+import FunkyButton from './FunkyButton.vue';
 
 const gameID = ref('');
 const teamName = ref('');
@@ -110,8 +82,13 @@ async function handleJoin() {
 </script>
 
 <style scoped>
-.join-game-card :deep(.v-card-text) { padding-top: var(--space-lg); }
+.join-game-card :deep(.v-card-text) {
+    padding-top: var(--space-lg);
+}
+
 @media (max-width: 599px) {
-    .join-game-card :deep(.v-card-text) { padding-top: var(--space-md); }
+    .join-game-card :deep(.v-card-text) {
+        padding-top: var(--space-md);
+    }
 }
 </style>

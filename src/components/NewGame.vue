@@ -4,7 +4,6 @@
             <v-text-field
                 v-model="input1"
                 label="State your name"
-                outlined
                 class="mb-4"
                 :maxlength="50"
                 :error-messages="nameErrors"
@@ -21,15 +20,12 @@
                 class="mb-4 max-teams-select"
                 :disabled="submitting"
             /> -->
+            
         </v-card-text>
         <v-card-actions>
             <v-spacer />
-            <v-btn
-                color="deep-purple-lighten-2"
-                variant="flat"
-                @click="handleCreateGame"
-                :disabled="submitting || nameErrors.length > 0"
-            >{{ submitting ? 'Creating...' : 'Create new game' }}</v-btn>
+            <FunkyButton :disabled="submitting || nameErrors.length > 0"  @click="handleCreateGame" :text="submitting ? 'Creating...' : 'Create new game'" />
+      
         </v-card-actions>
     
 </template>
@@ -38,6 +34,7 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { createNewGame } from '../state/store.js'
+import FunkyButton from './FunkyButton.vue'
 
 const input1 = ref('')
 const nameErrors = ref([])

@@ -107,6 +107,19 @@ button:focus-visible {
   box-shadow: var(--shadow-md);
 }
 
+.buzzer-card {
+  background: linear-gradient(135deg,#ffffff 0%, #f7f8fa 55%, #eef0f4 100%);
+  color: #1f1f23;
+  padding: 2.25rem 2.25rem 2.5rem;
+  border: 2px solid #000;
+  box-shadow: 0.4rem 0.4rem #05060f;
+  position: relative;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto 2rem;
+  overflow: hidden;
+}
+
 .app-section-title {
   font-weight: 600;
   color: var(--color-text-primary);
@@ -136,7 +149,7 @@ button:focus-visible {
   --color-border: #e2d4f7;
   --color-text-primary: #2d004d;
   --color-text-secondary: #5d2d80;
-  --color-accent: #a020f0;
+  --color-accent: #ff2d85;
   --color-accent-alt: #8e24aa;
   --color-success: #2e7d32;
   --color-danger: #c62828;

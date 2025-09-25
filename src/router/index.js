@@ -3,12 +3,13 @@ import Welcome from '../views/Welcome.vue'
 import Dashboard from '../views/Dashboard.vue'
 import NotFound from '../views/NotFound.vue'
 import { gameState } from '../state/store.js'
+import NewWelcome from '../components/ui_exp/NewWelcome.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Welcome',
-    component: Welcome
+    component: NewWelcome
   },
   {
     path: '/game',

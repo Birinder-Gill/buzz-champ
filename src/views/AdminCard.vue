@@ -1,5 +1,5 @@
 <template>
-  <v-card class="app-card admin-card pa-6" elevation="0">
+  <div class="app-card admin-card pa-6 buzzer-card" elevation="0">
     <!-- Exit Icon -->
     <v-btn class="exit-btn" icon size="small" variant="text" aria-label="Exit" @click="showConfirm = true">
       <v-icon>mdi-close</v-icon>
@@ -31,7 +31,7 @@
       <v-row class="align-center">
         <v-icon class="mr-2">mdi-account-group</v-icon>
         <span class="font-weight-medium">
-          Teams in Lobby ({{ teamCount }}/{{ maxTeams }})
+          Teams in Lobby ({{ teamCount }})
         </span>
       </v-row>
     </div>
@@ -70,7 +70,7 @@
       @click="handleStartGame">
       {{ status === 'complete' ? "Next round" : (teamCount === 0 ? 'Waiting for teams...' : 'Start Game') }}
     </v-btn>
-  </v-card>
+  </div>
 </template>
 
 <script setup>
