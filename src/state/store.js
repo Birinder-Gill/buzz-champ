@@ -2,14 +2,60 @@ import { GAMES, ADMIN, MAX_TEAMS, ROUNDS, TEAMS, BUZZED, BUZZED_AT } from "../da
 import { getDatabase } from "firebase/database";
 import { app } from "../../firebase-config.js";
 import { ref, onValue, off, set, update, serverTimestamp, get, child } from "firebase/database";
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 
-// Global reactive state for admin status
+// Persisted storage key for session-scoped state (survives reloads, not tab closes)
+const STORAGE_KEY = "buzzChamp.gameState.v1";
+
+function loadPersistedState() {
+  try {
+    if (typeof window === "undefined") return null;
+
+    // Prefer sessionStorage for per-tab persistence across reloads
+    let raw = sessionStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+
+    // One-time migration: if older localStorage exists, move it to sessionStorage
+    const legacy = localStorage.getItem(STORAGE_KEY);
+    if (legacy) {
+      sessionStorage.setItem(STORAGE_KEY, legacy);
+      localStorage.removeItem(STORAGE_KEY);
+      return JSON.parse(legacy);
+    }
+    return null;
+  } catch (_) {
+    return null;
+  }
+}
+
+const persisted = loadPersistedState();
+
+// Global reactive state for admin status (rehydrated from localStorage if available)
 const gameState = reactive({
-  isAdmin: false,
-  gameId: null,
-  teamName: null
+  isAdmin: persisted?.isAdmin ?? false,
+  gameId: persisted?.gameId ?? null,
+  teamName: persisted?.teamName ?? null
 });
+
+// Persist to sessionStorage whenever gameState changes
+if (typeof window !== "undefined") {
+  watch(
+    gameState,
+    (s) => {
+      try {
+        const payload = JSON.stringify({
+          isAdmin: s.isAdmin,
+          gameId: s.gameId,
+          teamName: s.teamName
+        });
+        sessionStorage.setItem(STORAGE_KEY, payload);
+      } catch (_) {
+        // noop - best-effort persistence
+      }
+    },
+    { deep: true }
+  );
+}
 
 function getGameId() {
   // Create a random 4 digit hex code
@@ -50,7 +96,15 @@ async function joinAsTeam(teamName, game_id) {
 
   // Write game under specific key instead of generating a push key
   const teamRef = ref(db, `${GAMES}/${game_id}/${TEAMS}/${teamName}`);
-
+  // var counter = 1;
+  // // Ensure unique team name by appending a number if necessary
+  // while (true) {
+  //   const teamSnap = await get(teamRef);
+  //   if (!teamSnap.exists()) break;
+  //   // If the team name is taken, append a counter
+  //   teamName = `${teamName} (${counter})`;
+  //   counter++;
+  // }
   const newTeam = {
     TEAM_NAME: teamName,
     [BUZZED]: false,
@@ -71,6 +125,8 @@ async function finishGame() {
   await update(gameRef, {
     STATUS: "terminated"
   });
+
+  clearGameState();
 }
 
 async function exitGame() {
@@ -78,11 +134,13 @@ async function exitGame() {
  const teamRef = ref(db, `${GAMES}/${gameState.gameId}/${TEAMS}/${gameState.teamName}`);
 
   await set(teamRef, null); // Remove the team entry
+  clearGameState();
+}
 
-  // Clear local game state
+function clearGameState() {
   gameState.isAdmin = false;
   gameState.gameId = null;
-  gameState.teamName = null;
+  gameState.teamName = null;  
 }
 
 async function kickTeam(teamName) {
@@ -144,7 +202,9 @@ function setListeners(updateLocalGame) {
     const data = snapshot.val();
     if (data) {
       updateLocalGame(data);
-
+      if(data.STATUS === "terminated") {
+        clearGameState();
+      }
       // Check if status is "game" and all teams have BUZZED === true
       if (data.STATUS === "game" && data.TEAMS) {
         const teamsArr = Object.values(data.TEAMS);
@@ -162,4 +222,4 @@ function setListeners(updateLocalGame) {
   return () => off(gameRef);
 }
 
-export { createNewGame, setListeners, joinAsTeam, gameState, startGame, finishCountdown, buzzBuzzer, finishGame, exitGame, kickTeam };
+export { createNewGame, setListeners, joinAsTeam, gameState, startGame, finishCountdown, buzzBuzzer, finishGame, exitGame, kickTeam, clearGameState };

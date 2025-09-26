@@ -36,7 +36,7 @@
                 </transition>
             </div>
 
-            <Buzzer :release-token="true" v-if="status === 'game' || status === 'complete'" @buzz="handleBuzzClick" />
+            <Buzzer :buzzed="showBuzzedAnimation" :release-token="true" v-if="status === 'game' || status === 'complete'" @buzz="handleBuzzClick" />
         </div>
     </div>
 </template>
@@ -106,7 +106,6 @@
     font-weight: 800;
     letter-spacing: 2px;
     background: none;
-    -webkit-background-clip: unset;
     color: var(--color-accent);
     filter: none;
 }
@@ -171,7 +170,6 @@
     font-weight: 800;
     letter-spacing: 1px;
     background: none;
-    -webkit-background-clip: unset;
     color: var(--color-accent);
     filter: none;
 }
@@ -181,7 +179,6 @@
     font-size: 1.05rem;
     letter-spacing: .6px;
     background: none;
-    -webkit-background-clip: unset;
     color: var(--color-text-secondary);
     opacity: .85;
     font-weight: 500;
@@ -267,7 +264,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { setListeners, finishCountdown, buzzBuzzer, gameState, exitGame } from '../state/store.js';
+import { setListeners, finishCountdown, buzzBuzzer, gameState, clearGameState } from '../state/store.js';
 import GameTerminated from '../components/GameTerminated.vue';
 import { useRouter } from 'vue-router';
 import CountDown from '../components/ui_exp/CountDown.vue';
@@ -295,6 +292,7 @@ function updateLocalGame(data) {
         currentTeam.value = data.TEAMS[gameState.teamName];
     } else {
         status.value = "terminated";
+        clearGameState();
     }
 
     // Handle countdown data

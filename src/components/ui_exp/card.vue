@@ -140,9 +140,9 @@ function handleStartGame() {
     if (teamCount.value > 0) startGame();
 }
 
-async function handleExit() {
+function handleExit() {
     if (confirm('Exit Game Room?\nYou will leave the admin panel.')) {
-        await finishGame();
+        finishGame();
         router.replace('/');
     }
 }

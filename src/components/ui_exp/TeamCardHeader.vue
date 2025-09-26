@@ -1,14 +1,18 @@
 <template>
-    <div class="card team-header-card" outlined>
-        <p class="title-line">Game Room: {{ gameState.gameId }}</p>
-        <p class="subtitle-line">You are on Team: {{ gameState.teamName }} in {{ admin }}'s game</p>
-        <div class="exit-btn-container">
-            <v-btn flat aria-label="Exit" @click="showConfirm = true">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
+    <div class="team-header-responsive">
+        <div class="team-header-scale">
+            <div class="card team-header-card" outlined>
+                <p class="title-line">Game Room: {{ gameState.gameId }}</p>
+                <p class="subtitle-line">You are on Team: {{ gameState.teamName }} in {{ admin }}'s game</p>
+                <div class="exit-btn-container">
+                    <v-btn flat aria-label="Exit" @click="showConfirm = true">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </div>
+            </div>
         </div>
     </div>
-    <v-dialog v-model="showConfirm" width="350">
+    <v-dialog v-model="showConfirm" :width="dialogWidth" :fullscreen="isXs">
         <v-card class="confirm-card">
             <p class="text-h6">Exit Game Room?</p>
             <v-card-text>
@@ -24,8 +28,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { exitGame } from '../../state/store.js';
+import { useDisplay } from 'vuetify';
 
 // accept props
 const { gameState, admin } = defineProps({
@@ -34,6 +39,12 @@ const { gameState, admin } = defineProps({
 });
 
 const showConfirm = ref(false);
+
+// responsive dialog controls
+const { xs } = useDisplay();
+const isXs = computed(() => xs.value);
+const dialogWidth = computed(() => (isXs.value ? 'auto' : 380));
+
 async function handleExit() {
     showConfirm.value = false;
     await exitGame();
@@ -41,6 +52,24 @@ async function handleExit() {
 </script>
 
 <style scoped>
+/* Responsive scaling wrapper (mirrors Buzzer.vue logic, but scoped to this component) */
+.team-header-responsive {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* Container-scoped CSS var to avoid global side effects */
+    --team-header-scale: 1;
+    /* Prevent accidental clipping when scaled */
+    overflow: visible;
+}
+
+.team-header-scale {
+    transform: scale(var(--team-header-scale));
+    transform-origin: top center;
+    will-change: transform;
+}
+
+
 .team-header-card {
     position: relative;
     background: #ffffff;
@@ -54,6 +83,8 @@ async function handleExit() {
         0 8px 14px -2px rgba(0,0,0,0.15);
     overflow: hidden;
     font-family: "Rubik","Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    /* prevent text underlapping the absolute exit button */
+    padding-right: 60px;
 }
 
 .team-header-card::after {
@@ -73,6 +104,9 @@ async function handleExit() {
     letter-spacing: 0.6px;
     color: #111;
     text-transform: uppercase;
+    /* fluid type + better wrapping */
+    font-size: clamp(1rem, 2.6vw + 0.5rem, 1.25rem);
+    overflow-wrap: anywhere;
 }
 
 .subtitle-line {
@@ -82,6 +116,9 @@ async function handleExit() {
     letter-spacing: 0.4px;
     color: #222;
     line-height: 1.25;
+    /* fluid type + better wrapping */
+    font-size: clamp(0.85rem, 2.2vw + 0.4rem, 1rem);
+    overflow-wrap: anywhere;
 }
 
 .exit-btn-container {
@@ -154,6 +191,16 @@ async function handleExit() {
     transition:
         transform .5s cubic-bezier(.22,.99,.36,1.21),
         box-shadow .6s cubic-bezier(.22,.99,.36,1.21);
+    /* Ensure confirm card doesn't overflow small screens */
+    max-width: min(92vw, 420px);
+}
+
+/* Fullscreen dialog adjustments on extra-small screens */
+:deep(.v-dialog--fullscreen) .confirm-card {
+    border-radius: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
 }
 
 .confirm-card::before {
@@ -252,8 +299,27 @@ async function handleExit() {
     color: #fff;
 }
 
-/* Dial back default generic dialog card styling to avoid conflict */
-.v-dialog .v-card:not(.confirm-card) {
-    /* ...existing code (unchanged for other cards)... */
+/* Mobile tweaks */
+@media (max-width: 600px) {
+    .team-header-card {
+        padding: 14px 14px 16px;
+        padding-right: 52px;
+    }
+
+    .exit-btn-container {
+        top: 4px;
+        right: 4px;
+    }
+
+    .exit-btn-container .v-btn {
+        min-width: 30px;
+        height: 30px;
+    }
+
+    .confirm-card .v-card-actions {
+        gap: 4px;
+    }
 }
+
+/* Removed empty ruleset to satisfy linter */
 </style>

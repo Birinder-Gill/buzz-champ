@@ -82,13 +82,18 @@ async function handleJoin() {
 </script>
 
 <style scoped>
-.join-game-card :deep(.v-card-text) {
-    padding-top: var(--space-lg);
-}
+/* Keep vertical spacing */
+.v-card-text { padding-top: var(--space-lg); }
 
+/* Mobile: remove all horizontal paddings/margins */
 @media (max-width: 599px) {
-    .join-game-card :deep(.v-card-text) {
-        padding-top: var(--space-md);
-    }
+	.v-card-text { padding-top: var(--space-md); }
+	.v-card-text,
+	.v-card-actions {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
 }
 </style>
