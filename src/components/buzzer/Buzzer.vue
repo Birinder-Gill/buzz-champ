@@ -27,7 +27,8 @@ const props = defineProps({
   releaseToken: {
     type: [Number, String, Boolean],
     default: 0
-  }
+  },
+  buzzed: { type: Boolean, default: false }
 })
 
 const isPressed = ref(false)
@@ -47,6 +48,11 @@ watch(() => props.releaseToken, () => {
   }
 })
 
+// Mirror buzzed prop into isPressed whenever parent updates it
+watch(() => props.buzzed, (val) => {
+  isPressed.value = !!val
+})
+
 const handleKeydown = (e) => {
   if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
     e.preventDefault()
@@ -55,6 +61,7 @@ const handleKeydown = (e) => {
 }
 
 onMounted(() => {
+  isPressed.value = !!props.buzzed
   window.addEventListener('keydown', handleKeydown)
 })
 

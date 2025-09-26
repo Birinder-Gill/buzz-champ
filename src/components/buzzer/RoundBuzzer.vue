@@ -129,6 +129,13 @@ export default {
 
 .threed-btn.threed-btn--secondary .threed-btn__inner {
   background-color: #00ffb2;
+  /* Default to lifted state for secondary variant */
+  transform: translate3d(0, -10px, 0);
+}
+
+.threed-btn.threed-btn--secondary::before {
+  /* Default to shifted shadow to enhance 3D effect */
+  transform: translate3d(10px, 0, 0);
 }
 
 .threed-btn.threed-btn--secondary:hover .threed-btn__inner,
